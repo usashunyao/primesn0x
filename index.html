@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PRIMES N_0[x] Irreducibility Code</title>
+    <style>
+      :root {
+        --bg: #fbfbfa;
+        --panel: #ffffff;
+        --text: #1f2428;
+        --muted: #6b7280;
+        --line: #e5e7eb;
+        --line-strong: #cbd5e1;
+        --ink: #111827;
+        --green: #047857;
+        --red: #b42318;
+        --amber: #b45309;
+        --blue: #2563eb;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      main {
+        width: min(920px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 32px 0 48px;
+      }
+
+      header {
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 18px;
+        margin-bottom: 22px;
+      }
+
+      h1, h2, h3, p { margin: 0; }
+
+      h1 {
+        font-size: 28px;
+        font-weight: 650;
+      }
+
+      header p {
+        max-width: 740px;
+        margin-top: 8px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      section {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 18px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: end;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      input, button {
+        font: inherit;
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid var(--line-strong);
+        border-radius: 6px;
+        color: var(--ink);
+        background: white;
+        padding: 12px;
+        outline: none;
+      }
+
+      input:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+
+      button {
+        min-height: 46px;
+        border: 1px solid var(--ink);
+        border-radius: 6px;
+        background: var(--ink);
+        color: white;
+        padding: 0 16px;
+        cursor: pointer;
+      }
+
+      .examples {
+        margin-top: 10px;
+      }
+
+      .bounds-note {
+        margin-top: 12px;
+      }
+
+      .example-group {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .example-label {
+        color: var(--muted);
+        font-size: 13px;
+        min-width: 112px;
+      }
+
+      .example-group button {
+        min-height: 0;
+        border-color: var(--line-strong);
+        background: white;
+        color: var(--muted);
+        padding: 7px 9px;
+        font-size: 13px;
+      }
+
+      .result {
+        margin-top: 18px;
+        border-top: 1px solid var(--line);
+        padding-top: 16px;
+      }
+
+      .result:empty { display: none; }
+
+      .summary {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .poly {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        overflow-wrap: anywhere;
+      }
+
+      .small {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        min-height: 28px;
+        padding: 5px 10px;
+        font-size: 13px;
+        font-weight: 650;
+        white-space: nowrap;
+      }
+
+      .badge.green { background: #ecfdf3; color: var(--green); }
+      .badge.red { background: #fef3f2; color: var(--red); }
+      .badge.amber { background: #fffbeb; color: var(--amber); }
+      .badge.blue { background: #eff6ff; color: var(--blue); }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .cell, .step, .test-card {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 10px;
+      }
+
+      .cell strong {
+        display: block;
+        margin-top: 4px;
+        font-size: 18px;
+      }
+
+      .steps {
+        display: grid;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .public-notes {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .step {
+        line-height: 1.45;
+      }
+
+      .step strong {
+        display: block;
+        margin-bottom: 3px;
+        font-size: 13px;
+      }
+
+      .details-block {
+        margin-top: 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 10px 12px;
+        background: #ffffff;
+      }
+
+      .details-block summary {
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .tests {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .test-card h3 {
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+
+      .test-card {
+        transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+      }
+
+      .test-card.active {
+        border-color: rgba(4, 120, 87, 0.55);
+        background: #f0fdf4;
+        box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.10);
+      }
+
+      .test-card .state {
+        display: inline-flex;
+        margin-top: 10px;
+        border-radius: 999px;
+        padding: 4px 9px;
+        background: #f3f4f6;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .test-card.active .state {
+        background: #dcfce7;
+        color: var(--green);
+      }
+
+      @media (max-width: 720px) {
+        main { width: min(100vw - 24px, 920px); padding-top: 20px; }
+        .row, .grid, .tests, .detail-grid { grid-template-columns: 1fr; }
+        .summary { flex-direction: column; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>PRIMES N_0[x] Irreducibility Code</h1>
+        <p>
+          Type a polynomial and the code will try to decide whether it is reducible or
+          irreducible. It applies the Kaplan-Polo test and the quadrinomial classification
+          test. If those are not applicable, it searches for possible N_0[x] factorizations;
+          within the degree and height range, the fallback gives a correct answer.
+        </p>
+      </header>
+
+      <section>
+        <div class="row">
+          <div>
+            <label for="poly-input">Polynomial in N0[x]</label>
+            <input id="poly-input" type="text" value="1 + x + x^2 + x^4 + x^9" />
+          </div>
+          <button id="check-button">Check</button>
+        </div>
+
+        <div class="examples" id="examples"></div>
+        <p class="small bounds-note">
+          Guaranteed answer range: degree <= 20 and height <= 50. Anything bigger is not
+          guaranteed to return a decision.
+        </p>
+        <div class="result" id="result"></div>
+
+        <div class="tests">
+          <div class="test-card" id="kp-card">
+            <h3>Test 1: Kaplan-Polo</h3>
+            <p class="small">
+              If the support has a midpoint gap, Kaplan-Polo gives monolithicness; primitive
+              coefficients then certify irreducibility in N0[x].
+            </p>
+            <span class="state" id="kp-state">not triggered</span>
+          </div>
+          <div class="test-card" id="quad-card">
+            <h3>Test 2: Quadrinomial</h3>
+            <p class="small">
+              For primitive positive-constant four-term polynomials, support shape and coefficient
+              equations decide reducibility: non-AP rectangles use AD = BC, and AP supports use
+              the cubic parameter equations.
+            </p>
+            <span class="state" id="quad-state">not triggered</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const MAX_DEGREE = 1500;
+      const MAX_COEFF = 10000000;
+      const EXACT_DEGREE_BOUND = 20;
+      const EXACT_HEIGHT_BOUND = 50;
+
+      const exampleGroups = [
+        {
+          label: "Kaplan-Polo Examples",
+          examples: [
+            "1 + x + x^2 + x^4 + x^9",
+            "1 + x^5 + x^7 + x^8 + x^9"
+          ]
+        },
+        {
+          label: "Quadrinomial Examples",
+          examples: [
+            "1 + 2x + 5x^3 + 3x^4",
+            "1 + 2x + 3x^3 + 6x^4",
+            "1 + 3x + 3x^2 + x^3",
+            "1 + x^2 + x^5 + x^9"
+          ]
+        }
+      ];
+
+      function trim(coeffs) {
+        const out = coeffs.slice();
+        while (out.length > 1 && out[out.length - 1] === 0) out.pop();
+        return out;
+      }
+
+      function gcd2(a, b) {
+        let x = Math.abs(a), y = Math.abs(b);
+        while (y) [x, y] = [y, x % y];
+        return x;
+      }
+
+      function content(coeffs) {
+        return trim(coeffs).reduce((g, c) => gcd2(g, c), 0);
+      }
+
+      function degree(coeffs) {
+        return trim(coeffs).length - 1;
+      }
+
+      function height(coeffs) {
+        return Math.max(...trim(coeffs).map((c) => Math.abs(c)));
+      }
+
+      function support(coeffs) {
+        return trim(coeffs).map((c, i) => c > 0 ? i : -1).filter((i) => i >= 0);
+      }
+
+      function isPrime(n) {
+        if (n <= 1) return false;
+        if (n <= 3) return true;
+        if (n % 2 === 0 || n % 3 === 0) return false;
+        for (let i = 5; i * i <= n; i += 6) {
+          if (n % i === 0 || n % (i + 2) === 0) return false;
+        }
+        return true;
+      }
+
+      function divisors(n) {
+        const out = [];
+        for (let d = 1; d * d <= n; d++) {
+          if (n % d === 0) {
+            out.push(d);
+            if (d * d !== n) out.push(n / d);
+          }
+        }
+        return out.sort((a, b) => a - b);
+      }
+
+      function parsePolynomial(text) {
+        const raw = text.trim();
+        if (!raw) throw new Error("Enter a polynomial.");
+        const normalized = raw.replace(/\s+/g, "").replace(/-/g, "+-");
+        const terms = new Map();
+        for (const piece of normalized.split("+").filter(Boolean)) {
+          const clean = piece.replaceAll("*", "");
+          let coeff, exp;
+          if (/^[+-]?\d+$/.test(clean)) {
+            coeff = Number(clean);
+            exp = 0;
+          } else {
+            const match = clean.match(/^([+-]?(?:\d+)?)x(?:\^(\d+))?$/i);
+            if (!match) throw new Error(`Could not parse "${piece}".`);
+            const prefix = match[1];
+            coeff = prefix === "" || prefix === "+" ? 1 : prefix === "-" ? -1 : Number(prefix);
+            exp = match[2] ? Number(match[2]) : 1;
+          }
+          if (!Number.isInteger(coeff) || !Number.isInteger(exp) || exp < 0) {
+            throw new Error("Use integer coefficients and nonnegative exponents.");
+          }
+          if (coeff < 0) throw new Error("This checker only accepts N0[x] polynomials.");
+          if (exp > MAX_DEGREE) throw new Error(`Degree bound exceeded: use degree <= ${MAX_DEGREE}.`);
+          if (coeff > MAX_COEFF) throw new Error(`Coefficient bound exceeded: use coefficients <= ${MAX_COEFF.toLocaleString()}.`);
+          terms.set(exp, (terms.get(exp) || 0) + coeff);
+          if (terms.get(exp) > MAX_COEFF) {
+            throw new Error(`Coefficient bound exceeded after combining terms: use coefficients <= ${MAX_COEFF.toLocaleString()}.`);
+          }
+        }
+        const maxExp = Math.max(...terms.keys());
+        return trim(Array.from({ length: maxExp + 1 }, (_, i) => terms.get(i) || 0));
+      }
+
+      function polyToString(coeffs) {
+        const data = trim(coeffs);
+        if (data.every((c) => c === 0)) return "0";
+        const parts = [];
+        for (let exp = data.length - 1; exp >= 0; exp--) {
+          const c = data[exp];
+          if (!c) continue;
+          if (exp === 0) parts.push(String(c));
+          else if (exp === 1) parts.push(c === 1 ? "x" : `${c}x`);
+          else parts.push(c === 1 ? `x^${exp}` : `${c}x^${exp}`);
+        }
+        return parts.join(" + ");
+      }
+
+      function xValuation(coeffs) {
+        const data = trim(coeffs);
+        for (let i = 0; i < data.length; i++) if (data[i] !== 0) return i;
+        return 0;
+      }
+
+      function normalize(coeffs) {
+        const c = content(coeffs);
+        const m = xValuation(coeffs);
+        return {
+          content: c,
+          xPower: m,
+          core: trim(coeffs.slice(m).map((v) => v / (c || 1)))
+        };
+      }
+
+      function kaplanPoloTest(coeffs) {
+        const S = support(coeffs).sort((a, b) => b - a);
+        if (S.length <= 1 || content(coeffs) !== 1) return null;
+        const k0 = S[0];
+        const kn = S[S.length - 1];
+        const midpoint2 = k0 + kn;
+        const k1 = S[1];
+        const kn1 = S[S.length - 2];
+
+        if (2 * k1 < midpoint2) {
+          return {
+            result: "irreducible",
+            detail: `Descending support is {${S.join(", ")}}. Since ${k1} < (${k0}+${kn})/2, Kaplan-Polo Lemma 3.2 makes the polynomial monolithic; content 1 then gives irreducibility.`
+          };
+        }
+        if (S.length > 3 && 2 * k1 <= midpoint2) {
+          return {
+            result: "irreducible",
+            detail: `Descending support is {${S.join(", ")}}. Since there are more than three support terms and ${k1} <= (${k0}+${kn})/2, Kaplan-Polo Lemma 3.2 applies.`
+          };
+        }
+        if (2 * kn1 > midpoint2) {
+          return {
+            result: "irreducible",
+            detail: `Descending support is {${S.join(", ")}}. Since ${kn1} > (${k0}+${kn})/2, the symmetric Kaplan-Polo Lemma 3.3 applies.`
+          };
+        }
+        if (S.length > 3 && 2 * kn1 >= midpoint2) {
+          return {
+            result: "irreducible",
+            detail: `Descending support is {${S.join(", ")}}. Since there are more than three support terms and ${kn1} >= (${k0}+${kn})/2, the symmetric Kaplan-Polo Lemma 3.3 applies.`
+          };
+        }
+        return null;
+      }
+
+      function rectangleFactor(coeffs, a, b, c) {
+        const A = coeffs[0], B = coeffs[a], C = coeffs[b], D = coeffs[c];
+        for (const u of divisors(A)) {
+          const w = A / u;
+          for (const v of divisors(D)) {
+            const t = D / v;
+            if (v * w === B && u * t === C) {
+              const left = [];
+              left[0] = u;
+              left[a] = v;
+              const right = [];
+              right[0] = w;
+              right[b] = t;
+              return [trim(left.map((x) => x || 0)), trim(right.map((x) => x || 0))];
+            }
+          }
+        }
+        return null;
+      }
+
+      function apFactor(coeffs, m) {
+        const A = coeffs[0], B = coeffs[m], C = coeffs[2 * m], D = coeffs[3 * m];
+        for (const u of divisors(A)) {
+          const w = A / u;
+          for (const v of divisors(D)) {
+            const t = D / v;
+            const numerator = B - v * w;
+            if (numerator < 0 || numerator % u !== 0) continue;
+            const z = numerator / u;
+            if (u * t + v * z !== C) continue;
+            const left = [];
+            left[0] = u;
+            left[m] = v;
+            const right = [];
+            right[0] = w;
+            right[m] = z;
+            right[2 * m] = t;
+            return {
+              factors: [trim(left.map((x) => x || 0)), trim(right.map((x) => x || 0))],
+              parameters: { u, v, w, z, t }
+            };
+          }
+        }
+        return null;
+      }
+
+      function quadrinomialTest(coeffs) {
+        const S = support(coeffs).sort((a, b) => a - b);
+        if (S.length !== 4 || S[0] !== 0 || content(coeffs) !== 1) return null;
+        const [, a, b, c] = S;
+        const isAP = b === 2 * a && c === 3 * a;
+        const isRectangle = c === a + b;
+
+        if (!isAP && !isRectangle) {
+          return {
+            result: "irreducible",
+            detail: `Support {${S.join(", ")}} is neither a four-term arithmetic progression nor a rectangle {0,r,s,r+s}. The quadrinomial classification certifies irreducibility.`
+          };
+        }
+
+        if (isRectangle && !isAP) {
+          const A = coeffs[0], B = coeffs[a], C = coeffs[b], D = coeffs[c];
+          if (A * D !== B * C) {
+            return {
+              result: "irreducible",
+              detail: `Rectangle support {0,${a},${b},${c}} is non-AP, but AD != BC: ${A}*${D} = ${A * D}, while ${B}*${C} = ${B * C}.`
+            };
+          }
+          const factors = rectangleFactor(coeffs, a, b, c);
+          return {
+            result: "reducible",
+            detail: `Rectangle support {0,${a},${b},${c}} has AD = BC = ${A * D}.`,
+            factorization: factors ? `(${polyToString(factors[0])})(${polyToString(factors[1])})` : null
+          };
+        }
+
+        if (isAP) {
+          const found = apFactor(coeffs, a);
+          if (!found) {
+            return {
+              result: "irreducible",
+              detail: `Arithmetic-progression support {0,${a},${2 * a},${3 * a}} has no u,v,w,t in N and z in N0 satisfying A=uw, B=uz+vw, C=ut+vz, D=vt.`
+            };
+          }
+          const { u, v, w, z, t } = found.parameters;
+          return {
+            result: "reducible",
+            detail: `Arithmetic-progression support works with u=${u}, v=${v}, w=${w}, z=${z}, t=${t}.`,
+            factorization: `(${polyToString(found.factors[0])})(${polyToString(found.factors[1])})`
+          };
+        }
+
+        return null;
+      }
+
+      function multiplyPoly(a, b) {
+        const out = Array(a.length + b.length - 1).fill(0);
+        for (let i = 0; i < a.length; i++) {
+          for (let j = 0; j < b.length; j++) out[i + j] += a[i] * b[j];
+        }
+        return trim(out);
+      }
+
+      function samePoly(a, b) {
+        const left = trim(a);
+        const right = trim(b);
+        return left.length === right.length && left.every((value, i) => value === right[i]);
+      }
+
+      function exactFactorSearch(coeffs) {
+        const f = trim(coeffs);
+        const d = degree(f);
+        if (d <= 0 || f[0] === 0 || height(f) > EXACT_HEIGHT_BOUND || d > EXACT_DEGREE_BOUND) {
+          return null;
+        }
+
+        const start = performance.now();
+        const maxVisits = 2500000;
+        const maxMs = 4500;
+        let visits = 0;
+        let cases = 0;
+        let timedOut = false;
+
+        function doneSearching() {
+          visits++;
+          if (visits > maxVisits || performance.now() - start > maxMs) {
+            timedOut = true;
+            return true;
+          }
+          return false;
+        }
+
+        function checkCandidate(g, h) {
+          if (samePoly(multiplyPoly(g, h), f)) return [trim(g), trim(h)];
+          return null;
+        }
+
+        for (let dg = 1; dg <= Math.floor(d / 2); dg++) {
+          const dh = d - dg;
+          for (const g0 of divisors(f[0])) {
+            const h0 = f[0] / g0;
+            for (const glead of divisors(f[d])) {
+              const hlead = f[d] / glead;
+              cases++;
+              const g = Array(dg + 1).fill(null);
+              const h = Array(dh + 1).fill(null);
+              g[0] = g0;
+              h[0] = h0;
+              g[dg] = glead;
+              h[dh] = hlead;
+
+              function search(n) {
+                if (doneSearching()) return null;
+                if (n >= d) return checkCandidate(g, h);
+
+                let known = 0;
+                const iMin = Math.max(0, n - dh);
+                const iMax = Math.min(dg, n);
+                for (let i = iMin; i <= iMax; i++) {
+                  const j = n - i;
+                  if (i === n || j === n) continue;
+                  known += (g[i] || 0) * (h[j] || 0);
+                }
+
+                const target = f[n] || 0;
+                const gCanAppear = n <= dg;
+                const hCanAppear = n <= dh;
+                const gPreset = gCanAppear && g[n] !== null;
+                const hPreset = hCanAppear && h[n] !== null;
+
+                let gCandidates;
+                if (!gCanAppear) gCandidates = [0];
+                else if (gPreset) gCandidates = [g[n]];
+                else {
+                  const maxG = Math.floor((target - known) / h0);
+                  if (maxG < 0) return null;
+                  gCandidates = Array.from({ length: maxG + 1 }, (_, i) => i);
+                }
+
+                for (const gv of gCandidates) {
+                  const afterG = target - known - gv * h0;
+                  if (afterG < 0) continue;
+
+                  if (!hCanAppear) {
+                    if (afterG !== 0) continue;
+                    if (!gPreset && gCanAppear) g[n] = gv;
+                    const found = search(n + 1);
+                    if (found) return found;
+                    if (!gPreset && gCanAppear) g[n] = null;
+                    continue;
+                  }
+
+                  if (hPreset) {
+                    if (afterG !== g0 * h[n]) continue;
+                    if (!gPreset && gCanAppear) g[n] = gv;
+                    const found = search(n + 1);
+                    if (found) return found;
+                    if (!gPreset && gCanAppear) g[n] = null;
+                    continue;
+                  }
+
+                  if (afterG % g0 !== 0) continue;
+                  const hv = afterG / g0;
+                  if (hv < 0) continue;
+
+                  if (!gPreset && gCanAppear) g[n] = gv;
+                  h[n] = hv;
+                  const found = search(n + 1);
+                  if (found) return found;
+                  h[n] = null;
+                  if (!gPreset && gCanAppear) g[n] = null;
+                }
+
+                return null;
+              }
+
+              const found = search(1);
+              if (found) return { result: "reducible", factors: found, cases, visits, timedOut: false };
+              if (timedOut) return { result: "unknown", cases, visits, timedOut: true };
+            }
+          }
+        }
+
+        return { result: "irreducible", cases, visits, timedOut: false };
+      }
+
+      function analyze(text) {
+        const original = parsePolynomial(text);
+        const steps = [];
+        if (original.every((c) => c === 0)) {
+          return { status: "not irreducible", tone: "amber", test: null, original, core: original, steps: [["Zero polynomial", "The zero polynomial is not an atom."]] };
+        }
+
+        const deg = degree(original);
+        const norm = normalize(original);
+        steps.push(["Normalization", `content = ${norm.content}, x-power = ${norm.xPower}, primitive core = ${polyToString(norm.core)}.`]);
+
+        if (deg === 0) {
+          const prime = isPrime(original[0]);
+          return {
+            status: prime ? "irreducible" : "reducible",
+            tone: prime ? "green" : "red",
+            test: null,
+            original,
+            core: original,
+            steps: steps.concat([["Constant", prime ? "Prime constants are irreducible." : "Composite constants factor in N0[x]."]])
+          };
+        }
+
+        if (original.length === 2 && original[0] === 0 && original[1] === 1) {
+          return { status: "irreducible", tone: "green", test: null, original, core: original, steps: steps.concat([["x", "The polynomial x is irreducible."]]) };
+        }
+
+        if (norm.content > 1) {
+          return { status: "reducible", tone: "red", test: null, original, core: norm.core, steps: steps.concat([["Content factor", "A nonconstant polynomial with content greater than 1 factors in N0[x]."]]) };
+        }
+
+        if (norm.xPower > 0) {
+          return { status: "reducible", tone: "red", test: null, original, core: norm.core, steps: steps.concat([["x factor", "A nonconstant polynomial other than x with zero constant term factors off x."]]) };
+        }
+
+        const kp = kaplanPoloTest(norm.core);
+        if (kp) {
+          return {
+            status: "irreducible",
+            tone: "green",
+            test: "kp",
+            testLabel: "Kaplan-Polo test",
+            original,
+            core: norm.core,
+            steps: steps.concat([["Kaplan-Polo monolithic test", kp.detail]])
+          };
+        }
+
+        const quad = quadrinomialTest(norm.core);
+        if (quad) {
+          const extra = quad.factorization ? ` Factorization: ${quad.factorization}.` : "";
+          return {
+            status: quad.result,
+            tone: quad.result === "irreducible" ? "green" : "red",
+            test: "quad",
+            testLabel: "Quadrinomial classification test",
+            factorization: quad.factorization,
+            original,
+            core: norm.core,
+            steps: steps.concat([["Quadrinomial rectangle/AP test", `${quad.detail}${extra}`]])
+          };
+        }
+
+        if (degree(norm.core) <= EXACT_DEGREE_BOUND && height(norm.core) <= EXACT_HEIGHT_BOUND) {
+          const exact = exactFactorSearch(norm.core);
+          if (exact && exact.result === "reducible") {
+            return {
+              status: "reducible",
+              tone: "red",
+              test: null,
+              factorization: `(${polyToString(exact.factors[0])})(${polyToString(exact.factors[1])})`,
+              original,
+              core: norm.core,
+              steps: steps.concat([
+                ["Kaplan-Polo monolithic test", "No midpoint-gap condition fired."],
+                ["Quadrinomial rectangle/AP test", "This theorem did not decide the polynomial."],
+                ["Exact small-polynomial search", `Found a factorization in N0[x]: (${polyToString(exact.factors[0])})(${polyToString(exact.factors[1])}). Checked ${exact.cases} endpoint cases.`]
+              ])
+            };
+          }
+          if (exact && exact.result === "irreducible") {
+            return {
+              status: "irreducible",
+              tone: "green",
+              test: null,
+              original,
+              core: norm.core,
+              steps: steps.concat([
+                ["Kaplan-Polo monolithic test", "No midpoint-gap condition fired."],
+                ["Quadrinomial rectangle/AP test", "This theorem did not decide the polynomial."],
+                ["Exact small-polynomial search", `No nonconstant N0[x] factorization exists within the exact search. Checked ${exact.cases} endpoint cases.`]
+              ])
+            };
+          }
+          if (exact && exact.timedOut) {
+            return {
+              status: "not decided",
+              tone: "amber",
+              test: null,
+              original,
+              core: norm.core,
+              steps: steps.concat([
+                ["Kaplan-Polo monolithic test", "No midpoint-gap condition fired."],
+                ["Quadrinomial rectangle/AP test", "This theorem did not decide the polynomial."],
+                ["Exact small-polynomial search", `The exhaustive search hit its safety limit after ${exact.visits.toLocaleString()} recursive checks. Try a sparser polynomial or a lower height.`]
+              ])
+            };
+          }
+        }
+
+        return {
+          status: "not decided",
+          tone: "amber",
+          test: null,
+          original,
+          core: norm.core,
+          steps: steps.concat([
+            ["Kaplan-Polo monolithic test", "No midpoint-gap condition fired."],
+            ["Quadrinomial rectangle/AP test", "The primitive core is not a four-term positive-constant quadrinomial, so this test does not apply."],
+            ["Exact small-polynomial search", `Skipped because the working polynomial is outside degree <= ${EXACT_DEGREE_BOUND} or height <= ${EXACT_HEIGHT_BOUND}.`]
+          ])
+        };
+      }
+
+      function setActiveTest(test) {
+        const kpCard = document.getElementById("kp-card");
+        const quadCard = document.getElementById("quad-card");
+        const kpState = document.getElementById("kp-state");
+        const quadState = document.getElementById("quad-state");
+
+        kpCard.classList.toggle("active", test === "kp");
+        quadCard.classList.toggle("active", test === "quad");
+        kpState.textContent = test === "kp" ? "triggered" : "not triggered";
+        quadState.textContent = test === "quad" ? "triggered" : "not triggered";
+      }
+
+      function renderResult() {
+        const root = document.getElementById("result");
+        try {
+          const result = analyze(document.getElementById("poly-input").value);
+          const normalized = normalize(result.original);
+          const publicNotes = [
+            result.testLabel ? `<div class="step"><strong>Test used</strong>${result.testLabel}</div>` : "",
+            result.factorization ? `<div class="step"><strong>Factorization</strong>${result.factorization}</div>` : ""
+          ].filter(Boolean).join("");
+          setActiveTest(result.test);
+          root.innerHTML = `
+            <div class="summary">
+              <div>
+                <div class="poly">${polyToString(result.original)}</div>
+              </div>
+              <span class="badge ${result.tone}">${result.status}</span>
+            </div>
+            <div class="grid">
+              <div class="cell"><div class="small">degree</div><strong>${degree(result.original)}</strong></div>
+              <div class="cell"><div class="small">height</div><strong>${height(result.original)}</strong></div>
+              <div class="cell"><div class="small">support</div><strong style="font-size:14px">{${support(result.original).join(", ")}}</strong></div>
+            </div>
+            ${publicNotes ? `<div class="public-notes">${publicNotes}</div>` : ""}
+            <details class="details-block">
+              <summary>Details</summary>
+              <div class="detail-grid">
+                <div class="cell"><div class="small">content</div><strong>${normalized.content}</strong></div>
+                <div class="cell"><div class="small">x-power</div><strong>${normalized.xPower}</strong></div>
+                <div class="cell"><div class="small">working polynomial</div><strong style="font-size:14px">${polyToString(result.core)}</strong></div>
+              </div>
+              <div class="steps">
+                ${result.steps.map(([name, body]) => `<div class="step"><strong>${name}</strong>${body}</div>`).join("")}
+              </div>
+            </details>
+          `;
+        } catch (error) {
+          setActiveTest(null);
+          root.innerHTML = `<span class="badge blue">input issue</span><div class="steps"><div class="step">${error.message}</div></div>`;
+        }
+      }
+
+      function clearResult() {
+        document.getElementById("result").innerHTML = "";
+        setActiveTest(null);
+      }
+
+      const exampleRoot = document.getElementById("examples");
+      const input = document.getElementById("poly-input");
+      exampleGroups.forEach((group) => {
+        const row = document.createElement("div");
+        row.className = "example-group";
+        const label = document.createElement("span");
+        label.className = "example-label";
+        label.textContent = group.label;
+        row.appendChild(label);
+
+        group.examples.forEach((example) => {
+          const button = document.createElement("button");
+          button.textContent = example;
+          button.addEventListener("click", () => {
+            input.value = example;
+            clearResult();
+          });
+          row.appendChild(button);
+        });
+        exampleRoot.appendChild(row);
+      });
+
+      document.getElementById("check-button").addEventListener("click", renderResult);
+      input.addEventListener("input", clearResult);
+    </script>
+  </body>
+</html>
